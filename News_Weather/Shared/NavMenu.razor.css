@@ -1,0 +1,119 @@
+.navbar-toggler {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row {
+    background-color: #5198ff;
+    text-align: center;
+    margin-top: 20px;
+    height: 5.4rem;
+    margin-right: 10px;
+    border-radius: 20px;
+}
+
+.navbar-brand {
+    font-size: 2.1rem;
+}
+
+.oi {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.nav-item {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type {
+        padding-bottom: 1rem;
+    }
+
+
+.nav-item ::deep a {
+    color: #d7d7d7;
+    border-radius: 4px;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    line-height: 3rem;
+}
+
+
+.nav-item ::deep a.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.nav-item ::deep a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+
+    .navbar {
+        margin-left:10px;
+        margin-right:10px;
+        border-radius: 20px;
+    }
+
+        .navbar li {
+            float: left;
+            list-style: none;
+            padding: 10px;
+        }
+
+            .navbar li a {
+                text-decoration: none;
+                color: white;
+                padding: 11px 0px;
+                margin: 0px 10px;
+            }
+
+            .navbar li :hover {
+                background-color: #ffffff;
+                border-radius: 15px;
+                color: mediumpurple;
+                padding:10px;
+                font-weight:bold;
+               
+
+            }
+
+   
+
+    .search {
+        float: right;
+        color: rgb(225, 65, 65);
+        margin: 5px 12px;
+        border-radius: 20px;
+        border-style: none;
+        cursor: help;
+        text-align: center;
+    }
+
+    .container {
+        border: 2px solid rgb(255, 0, 0);
+        background-color: rgb(244, 216, 173);
+        height: 4000px;
+    }
+
+    #position {
+        position: sticky;
+    }
+}

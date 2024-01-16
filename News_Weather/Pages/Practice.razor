@@ -1,0 +1,52 @@
+﻿@page "/bluetest/{param?}"
+
+<h3>Test</h3>
+
+<p>Message1 value: @message1 </p>
+<p>Message2 value: @message2 </p>
+
+<p>The Value of Parameter is: @param </p>
+
+
+@code {
+
+	[Parameter]
+	public string? param { get; set; }
+
+
+	private string message1 = "Not set";
+	private string message2 = "Not set";
+
+	public override Task SetParametersAsync(ParameterView parameters)
+	{
+
+		if(parameters.TryGetValue<string>(nameof(param), out var value))
+		{
+			if(value!=null)
+			{
+				message1 = value + "testing";
+			}
+		}
+		return base.SetParametersAsync(parameters);
+	}
+
+
+	protected override void OnParametersSet()
+	{
+		message1 = "Value set by on param";
+	}
+
+
+	protected override void OnInitialized()
+	{
+		message2 = "Is : " + DateTime.Now;
+	}
+
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		message1 = "Aloo wali Biryani by on param with Dhaniya";
+
+		StateHasChanged();
+	}
+}

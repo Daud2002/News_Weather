@@ -1,0 +1,169 @@
+﻿@page "/weather"
+
+@using Weather_and_News.Models
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Collections.Generic
+<style>
+    .card {
+        background: linear-gradient(to bottom, #1e3c72, #2a5298);
+        color: white;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+        font-size: 24px;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3; 
+            transform: scale(1.05); 
+        }
+
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <h3 class="card-title">Weather Information</h3>
+                <div class="form-group">
+                    <label for="cityInput">Enter City: </label>
+                    <input type="text" class="form-control" id="cityInput"  />
+                </div>
+                <button class="btn btn-primary" @onclick="GetWeather">Get Weather</button>
+                <hr />
+
+                @if (showWeather)
+                {
+                    <div class="weather-info" text-align="center" style="display: flex; justify-content: center; align-items: center;">
+                        <div style="text-align: center">
+                            <i class="fas @GetWeatherIconClass(WeatherInfo.Description) px-46" style="font-size: 4rem;"></i>
+                            <p><strong>City:</strong> @WeatherInfo.City</p>
+                            <p><strong>Temperature:</strong> @WeatherInfo.Temperature</p>
+                            <p><strong>Description:</strong> @WeatherInfo.Description</p>
+                            <p><strong>Humidity:</strong> @WeatherInfo.Humidity</p>
+                            <p><strong>Wind Speed:</strong> @WeatherInfo.WindSpeed</p>
+                            <p><strong>Pressure:</strong> @WeatherInfo.Pressure</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <h3 class="card-title">Latest Weather News</h3>
+                <ul class="news-list">
+                    @foreach (var article in WeatherArticles)
+                    {
+                        <li>
+                            <a href="@article.Link" target="_blank">@article.Title</a>
+                            <p>@article.Description</p>
+                            @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                            {
+                                <img src="@article.ImageUrl" alt="Image for @article.Title" class="img-fluid" />
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private WeatherInfo WeatherInfo = new WeatherInfo();
+    private HttpClient HttpClient = new HttpClient();
+    private bool showWeather = false;
+    private List<NewsArticle> WeatherArticles = new List<NewsArticle>
+    {
+        new NewsArticle
+        {
+            Title = "Weather Article 1",
+            Link = "https://www.youtube.com/channel/UCGTUbwceCMibvpbd2NaIP7A",
+            Description = "Weather news channel",
+            ImageUrl = "https://i.ytimg.com/an_webp/tMehFkqPrE0/mqdefault_6s.webp?du=3000&sqp=CMOlqKoG&rs=AOn4CLCH_GJ7c7JS1l8V_plR8a6rU-KF1g"
+        },
+        new NewsArticle
+        {
+            Title = "Weather Article 2",
+            Link = "https://www.example.com/article-2",
+            Description = "New maps reveal who could see more snow this winter during a strong El Niño.",
+            ImageUrl = "https://media.cnn.com/api/v1/images/stellar/prod/130210225726-03-blizzard-0210.jpg?c=16x9&q=h_438,w_780,c_fill"
+        },
+        new NewsArticle
+        {
+            Title = "Weather Article 3",
+            Link = "https://www.example.com/article-3",
+            Description = "Hurricane Otis death toll climbs to 45 in Mexico",
+            ImageUrl = "https://media.cnn.com/api/v1/images/stellar/prod/231028162539-01-hurricane-otis-1027.jpg?c=16x9&q=h_270,w_480,c_fill"
+        },
+    };
+
+    private async Task GetWeather()
+    {
+        if (!string.IsNullOrEmpty(WeatherInfo.City))
+        {
+            try
+            {
+                string apiKey = "3c75816ede8b96b39f5634ae487ee19f"; 
+                var response = await HttpClient.GetFromJsonAsync<OpenWeatherResponse>(
+                  $"https://api.openweathermap.org/data/2.5/weather?q={WeatherInfo.City}&appid={apiKey}"
+                );
+                if (response != null)
+                {
+                    WeatherInfo = new WeatherInfo
+                        {
+                            City = response.Name,
+                            Temperature = $"{response.Main.Temp} K", 
+                            Description = response.Weather[0].Description,
+                            Humidity = $"{response.Main.Humidity}%",
+                            WindSpeed = $"{response.Wind.Speed} m/s",
+                            Pressure = $"{response.Main.Pressure} hPa"
+                        };
+                    showWeather = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }
+
+    private string GetWeatherIconClass(string description)
+    {
+        description = description.ToLower(); 
+
+        if (description.Contains("clear sky"))
+        {
+            return "oi oi-sun"; 
+        }
+        else if (description.Contains("few clouds") || description.Contains("scattered clouds"))
+        {
+            return "oi oi-cloud-sun"; 
+        }
+        else if (description.Contains("cloud"))
+        {
+            return "oi oi-cloud"; 
+        }
+
+        else
+        {
+            return "oi oi-question"; 
+        }
+    }
+}
